@@ -9,6 +9,9 @@ export const AppState = {
   ensoBreath: 0,      // 0 → 1: enso size from Ibuki gesture or auto
   time: 0,            // elapsed seconds
 
+  // morph speed (controls 水月 state-cycle period; 1.0 = 15s full cycle)
+  morphSpeed: 1.0,
+
   // hand tracking
   handMode: false,
   palmOpenness: 1,    // 0 = fist, 1 = open palm

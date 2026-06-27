@@ -269,6 +269,9 @@ const debugUI = buildDebugUI({
       executeCut();
     }
   },
+  setMorphPhase(phase) {
+    liquidMoon.morphPhase = phase;
+  },
   triggerPulse() {
     liquidMoon.triggerPulse(1.0);
   },

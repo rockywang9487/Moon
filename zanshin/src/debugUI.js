@@ -45,6 +45,35 @@ export function buildDebugUI(callbacks) {
     callbacks.onSceneChange?.(4);
   });
 
+  // ── 水月 morph controls ────────────────────────────────────────────────────
+  const moonFolder = pane.addFolder({ title: '水月 · Liquid Moon', expanded: true });
+  const moonParams = { morphSpeed: 1.0, morphPhase: 0 };
+
+  moonFolder.addBinding(moonParams, 'morphSpeed', {
+    label: 'Morph Speed',
+    min: 0.05, max: 4.0, step: 0.05,
+  }).on('change', (ev) => {
+    AppState.morphSpeed = ev.value;
+  });
+
+  // Live readout of current state
+  moonFolder.addBinding(AppState, 'morphSpeed', {
+    label: 'State →',
+    readonly: true,
+    view: 'graph',
+    min: 0, max: 4,
+  });
+
+  moonFolder.addButton({ title: '❄  Force: Ice / Crystal' }).on('click', () => {
+    callbacks.setMorphPhase?.(0);
+  });
+  moonFolder.addButton({ title: '🫧  Force: Fluid / Pearl' }).on('click', () => {
+    callbacks.setMorphPhase?.(Math.PI * 2 / 3);
+  });
+  moonFolder.addButton({ title: '💚  Force: Inner Pulse' }).on('click', () => {
+    callbacks.setMorphPhase?.(Math.PI * 4 / 3);
+  });
+
   // Tension slider
   const tensionFolder = pane.addFolder({ title: '执念 · Tension', expanded: true });
   const tensionParams = { tension: 0 };
