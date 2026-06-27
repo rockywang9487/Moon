@@ -142,9 +142,9 @@ const WATER_FRAG = /* glsl */`
     vec3 sparkLight = moonCol * sparkles;
     vec3 finalColor = waterBase + reflLight + sparkLight;
 
-    // Slightly more opaque in the bright streak, transparent elsewhere
-    float alpha = 0.82 + streak * 0.14;
-    gl_FragColor = vec4(finalColor, alpha);
+    // Keep it very subtle — just a hint of reflection
+    float alpha = 0.10 * (0.5 + streak * 0.5 + sparkles * 0.3);
+    gl_FragColor = vec4(finalColor, clamp(alpha, 0.0, 0.12));
   }
 `;
 
@@ -165,8 +165,8 @@ export class WaterSurface {
   // ── Water surface plane ───────────────────────────────────────────────────
 
   _buildWater() {
-    // Subdivided plane for gentle wave displacement
-    const geo = new THREE.PlaneGeometry(18, 18, 48, 48);
+    // Small plane — just the reflection pool directly under the sphere
+    const geo = new THREE.PlaneGeometry(4, 5, 32, 32);
 
     const mat = new THREE.ShaderMaterial({
       vertexShader:   WATER_VERT,
@@ -181,8 +181,8 @@ export class WaterSurface {
 
     this.waterMesh = new THREE.Mesh(geo, mat);
     this.waterMesh.rotation.x = -Math.PI / 2;
-    // Centre the plane slightly behind origin so more water extends away from cam
-    this.waterMesh.position.set(0, WATER_Y, -2);
+    // Centred directly under the sphere (x=0, z=0)
+    this.waterMesh.position.set(0, WATER_Y, -0.5);
     this.waterMesh.renderOrder = 1;
     this.scene.add(this.waterMesh);
   }

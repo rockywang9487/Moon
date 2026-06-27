@@ -248,9 +248,9 @@ void main() {
 
   float outAlpha = 0.94;
   if (u_isReflection > 0.5) {
-    // Reflection is dimmer and more transparent — mirrored beauty, not the real thing
-    finalColor *= 0.48;
-    outAlpha = 0.50;
+    // Ghost-like reflection — barely there, 10% opacity
+    finalColor *= 0.35;
+    outAlpha = 0.10;
   }
   gl_FragColor = vec4(finalColor, outAlpha);
 }
