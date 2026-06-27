@@ -3,6 +3,7 @@ uniform float u_time;
 uniform float u_tension;
 uniform float u_pulse;
 uniform float u_morphPhase;   // 0 → 2π,  drives the 3-state cycle
+uniform float u_isReflection; // 0 = main sphere, 1 = reflection below water
 
 varying vec3  vNormal;
 varying vec3  vPosition;
@@ -83,4 +84,16 @@ void main() {
   vec3 displaced = position + normal * totalD;
   vWorldPos = (modelMatrix * vec4(displaced, 1.0)).xyz;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
+
+  // Reflection-mode: ripple the screen-space position to simulate
+  // the distortion of looking through a moving water surface
+  if (u_isReflection > 0.5) {
+    float rx = sin(vWorldPos.x * 4.2 + u_time * 2.4) * 0.055
+             + sin(vWorldPos.z * 3.0 - u_time * 1.6) * 0.028;
+    float ry = sin(vWorldPos.z * 3.8 + u_time * 1.9) * 0.022
+             + sin(vWorldPos.x * 5.0 - u_time * 2.8) * 0.015;
+    // Scale by .w for perspective-correct distortion in clip space
+    gl_Position.x += rx * gl_Position.w;
+    gl_Position.y += ry * gl_Position.w;
+  }
 }

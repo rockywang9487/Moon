@@ -4,6 +4,7 @@ uniform float u_tension;
 uniform float u_pulse;
 uniform float u_morphPhase;
 uniform vec3  u_cameraPos;
+uniform float u_isReflection; // 0 = main, 1 = reflection
 
 varying vec3  vNormal;
 varying vec3  vPosition;
@@ -244,5 +245,12 @@ void main() {
 
   // ── Final output ──────────────────────────────────────────────────────────
   finalColor = max(finalColor, vec3(0.0));
-  gl_FragColor = vec4(finalColor, 0.94);
+
+  float outAlpha = 0.94;
+  if (u_isReflection > 0.5) {
+    // Reflection is dimmer and more transparent — mirrored beauty, not the real thing
+    finalColor *= 0.48;
+    outAlpha = 0.50;
+  }
+  gl_FragColor = vec4(finalColor, outAlpha);
 }

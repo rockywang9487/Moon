@@ -6,6 +6,7 @@ import { RedThreads }    from './scenes/RedThreads.js';
 import { BloodParticles } from './scenes/BloodParticles.js';
 import { Enso }          from './scenes/Enso.js';
 import { CutEffect }     from './scenes/CutEffect.js';
+import { WaterSurface }  from './scenes/WaterSurface.js';
 import { buildDebugUI }  from './debugUI.js';
 import { initHandTracking } from './handTracking.js';
 
@@ -16,6 +17,8 @@ const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x000000, 1);
+// Required for per-material clipping planes (reflection sphere)
+renderer.localClippingEnabled = true;
 container.appendChild(renderer.domElement);
 
 const scene  = new THREE.Scene();
@@ -31,6 +34,7 @@ svgCanvas.height = window.innerHeight;
 // ─── Scene Objects ─────────────────────────────────────────────────────────
 
 const liquidMoon    = new LiquidMoon(scene, camera);
+const waterSurface  = new WaterSurface(scene, camera);
 const redThreads    = new RedThreads(scene);
 const bloodParticles = new BloodParticles(scene);
 const enso          = new Enso(svgCanvas);
@@ -372,8 +376,16 @@ function animate() {
   // Update enso from state
   enso.size = AppState.ensoBreath;
 
+  // Sync water surface with moon morph state
+  waterSurface.syncMoon(
+    liquidMoon.morphPhase,
+    AppState.tensionLock,
+    Math.max(0, liquidMoon.pulseValue)
+  );
+
   // Update subsystems
   liquidMoon.update(dt);
+  waterSurface.update(dt);
   redThreads.update(dt);
   bloodParticles.update(dt);
   cutEffect.update(dt);

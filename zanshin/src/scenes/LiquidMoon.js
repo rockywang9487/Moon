@@ -34,11 +34,12 @@ export class LiquidMoon {
     const geo = new THREE.SphereGeometry(1.0, 128, 128);
 
     this.uniforms = {
-      u_time:       { value: 0 },
-      u_tension:    { value: 0 },
-      u_pulse:      { value: 0 },
-      u_morphPhase: { value: 0 },
-      u_cameraPos:  { value: new THREE.Vector3() },
+      u_time:          { value: 0 },
+      u_tension:       { value: 0 },
+      u_pulse:         { value: 0 },
+      u_morphPhase:    { value: 0 },
+      u_cameraPos:     { value: new THREE.Vector3() },
+      u_isReflection:  { value: 0.0 },  // always 0 for the main sphere
     };
 
     const mat = new THREE.ShaderMaterial({
@@ -50,6 +51,9 @@ export class LiquidMoon {
     });
 
     this.mesh = new THREE.Mesh(geo, mat);
+    // Moved up ~20% of viewport height, renderOrder above water (2)
+    this.mesh.position.set(0, 0.75, 0);
+    this.mesh.renderOrder = 2;
     this.scene.add(this.mesh);
 
     // Warm key light (bar ambience)
@@ -107,10 +111,10 @@ export class LiquidMoon {
     }
     this.uniforms.u_pulse.value = Math.max(0, this.pulseValue);
 
-    // Scale: base + tension oscillation + heartbeat pulse + GSAP pulseScale
+    // Scale: 0.8 base (20% smaller) × tension oscillation × heartbeat × GSAP
     const tensionBulge = 1.0 + tension * 0.05 * Math.sin(t * 8.0);
     const pulseBulge   = 1.0 + this.pulseValue * 0.08;
-    this.mesh.scale.setScalar(tensionBulge * pulseBulge * this.pulseScale);
+    this.mesh.scale.setScalar(0.8 * tensionBulge * pulseBulge * this.pulseScale);
 
     // Gentle auto-rotation (act 1 meditation)
     this.mesh.rotation.y += dt * 0.07;
