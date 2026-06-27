@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZANSHIN / 斩</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #000;
+      overflow: hidden;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    #canvas-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    canvas { display: block; }
+
+    /* Scene overlay for transitions */
+    #scene-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Cut flash element */
+    #cut-flash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* SVG overlay for 2D effects (Enso, cut line) */
+    #svg-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    /* Zanshin final text */
+    #zanshin-text {
+      position: fixed;
+      bottom: 40px;
+      left: 40px;
+      color: rgba(255,255,255,0);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      font-weight: 300;
+      z-index: 30;
+      transition: color 3s ease;
+      pointer-events: none;
+    }
+    #zanshin-text.visible {
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Scene title (subtle, top left) */
+    #scene-label {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: rgba(255,255,255,0.15);
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      z-index: 30;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
+
+    /* Chromatic aberration overlay for act 2 */
+    #chroma-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 12;
+      opacity: 0;
+      mix-blend-mode: screen;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(180,0,30,0.15) 100%);
+      transition: opacity 0.3s ease;
+    }
+
+    /* Vignette */
+    #vignette {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 11;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%);
+    }
+
+    /* Camera permission button */
+    #camera-btn {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 8px 16px;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      z-index: 30;
+      transition: all 0.3s ease;
+    }
+    #camera-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+    }
+    #camera-btn.active {
+      border-color: rgba(100,255,180,0.4);
+      color: rgba(100,255,180,0.7);
+    }
+
+    /* Hand tracking video (hidden) */
+    #camera-feed {
+      position: fixed;
+      bottom: 0; right: 0;
+      width: 1px; height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Tweakpane custom styling */
+    .tp-dfwv {
+      width: 280px !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div id="vignette"></div>
+  <div id="chroma-overlay"></div>
+  <div id="cut-flash"></div>
+  <canvas id="svg-overlay"></canvas>
+  <div id="scene-label">ACT I · 水月</div>
+  <div id="zanshin-text">[ Process Terminated. &nbsp; Zanshin. ]</div>
+  <button id="camera-btn">ENABLE HAND TRACKING</button>
+  <video id="camera-feed" autoplay playsinline></video>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
